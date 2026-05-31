@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kim Học — Cùng học mỗi ngày</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#fff7ed;
+    --bg2:#ffe9d6;
+    --ink:#3a2a1a;
+    --muted:#8a6d57;
+    --card:#ffffff;
+    --ring:rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Be Vietnam Pro",system-ui,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #ffd9a8 0%, transparent 55%),
+      radial-gradient(900px 500px at -10% 110%, #ffc1c1 0%, transparent 50%),
+      linear-gradient(160deg,var(--bg1),var(--bg2));
+    min-height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 20px;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.6) 1px, transparent 1px);
+    background-size:22px 22px;
+    opacity:.4; pointer-events:none;
+  }
+  .wrap{width:100%;max-width:760px;text-align:center;position:relative;z-index:1}
+
+  .logo{
+    width:78px;height:78px;border-radius:24px;margin:0 auto 18px;
+    display:grid;place-items:center;font-size:38px;
+    background:linear-gradient(145deg,#ffb454,#ff8a3d);
+    box-shadow:0 12px 30px rgba(255,138,61,.35);
+    transform:rotate(-4deg);
+    animation:pop .7s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  h1{
+    font-family:"Baloo 2",cursive;
+    font-size:clamp(40px,9vw,68px);
+    line-height:1;
+    letter-spacing:-1px;
+    background:linear-gradient(120deg,#ff7a18,#e0367a);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:rise .6s ease .05s both;
+  }
+  .tag{
+    margin-top:10px;color:var(--muted);font-size:clamp(15px,3.6vw,18px);
+    animation:rise .6s ease .15s both;
+  }
+
+  .grid{
+    margin-top:42px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:18px;
+  }
+  .card{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:12px;
+    text-decoration:none;color:var(--ink);
+    background:var(--card);
+    border:1px solid var(--ring);
+    border-radius:26px;
+    padding:34px 20px;
+    box-shadow:0 10px 24px rgba(58,42,26,.08);
+    transition:transform .18s ease, box-shadow .18s ease;
+    animation:rise .6s ease both;
+  }
+  .card:hover{transform:translateY(-6px) rotate(-1deg);box-shadow:0 20px 40px rgba(58,42,26,.16)}
+  .card .emoji{
+    width:72px;height:72px;border-radius:20px;display:grid;place-items:center;font-size:36px;
+  }
+  .card .name{font-family:"Baloo 2";font-weight:700;font-size:24px}
+  .card .sub{font-size:13px;color:var(--muted)}
+
+  /* màu riêng cho từng môn */
+  .c-van  .emoji{background:#ffe3ec;color:#e0367a}
+  .c-toan .emoji{background:#e3f0ff;color:#2f7ed8}
+  .c-anh  .emoji{background:#e6f7ec;color:#1f9d57}
+  .c-add  {border-style:dashed;color:var(--muted)}
+  .c-add  .emoji{background:#f3ede7}
+
+  footer{margin-top:38px;color:var(--muted);font-size:13px;animation:rise .6s ease .4s both}
+
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pop{from{opacity:0;transform:scale(.6) rotate(-4deg)}to{opacity:1;transform:scale(1) rotate(-4deg)}}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="logo">📚</div>
+    <h1>Kim Học</h1>
+    <p class="tag">Chọn một môn để bắt đầu nào!</p>
+
+    <section class="grid" id="grid"></section>
+
+    <footer>Học mỗi ngày một chút 🌱 · kimhoc.fun</footer>
+  </main>
+
+<script>
+  /* ====== CHỈ CẦN SỬA Ở ĐÂY ======
+     Thêm/bớt môn bằng cách sửa danh sách dưới.
+     - href: dán link tới game/trang của môn đó
+       (vd subdomain "https://toan.kimhoc.fun"  hoặc  đường dẫn "/toan")
+     - class: đổi màu (c-van / c-toan / c-anh) hoặc thêm màu mới trong CSS  */
+  const SUBJECTS = [
+    { name:"Văn",  emoji:"✍️", sub:"Đọc & viết",   href:"https://van.kimhoc.fun",  cls:"c-van"  },
+    { name:"Toán", emoji:"➗", sub:"Tính toán",     href:"https://toan.kimhoc.fun", cls:"c-toan" },
+    // { name:"Tiếng Anh", emoji:"🔤", sub:"Từ vựng", href:"/anh", cls:"c-anh" },
+  ];
+  /* ================================ */
+
+  const grid = document.getElementById("grid");
+  SUBJECTS.forEach((s,i)=>{
+    const a = document.createElement("a");
+    a.href = s.href;
+    a.className = "card " + s.cls;
+    a.style.animationDelay = (0.2 + i*0.08) + "s";
+    a.innerHTML = `<div class="emoji">${s.emoji}</div>
+                   <div class="name">${s.name}</div>
+                   <div class="sub">${s.sub}</div>`;
+    grid.appendChild(a);
+  });
+
+  // nút thêm môn (gợi ý cho chị, có thể xoá)
+  const add = document.createElement("div");
+  add.className = "card c-add";
+  add.innerHTML = `<div class="emoji">＋</div><div class="name">Thêm môn</div><div class="sub">sửa trong file</div>`;
+  grid.appendChild(add);
+</script>
+</body>
+</html>
